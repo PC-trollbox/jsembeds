@@ -11,21 +11,26 @@ console.log(embeds.embed("This is original string, and <embed>\"this is JS\"<clo
 
 Make your eval safe, compiler, etc.
 
-Default: a simple embed driver that `eval`s the content, like this:
+Default: a embed driver that `eval`s the content and replaces any exclusives, like this:
 
 ```javascript
-JSEmbeds.evalDriver = function(...args){
-	return eval(...args);
+embeds.evalDriver = function(string, exclusive){
+	for (var exclusiveName in exclusive){
+		while (string.includes(this.exclusivePrefix + exclusiveName)){
+			string = string.replace(this.exclusivePrefix + exclusiveName, JSON.stringify(exclusive[exclusiveName]))
+		}
+	}
+	return eval(string);
 }
 ```
 
 ```javascript
 var embeds = require("jsembeds");
-embeds.evalDriver = function(...args){
+embeds.evalDriver = function(args){
 	console.log("Attempting to run this!")
-	console.log(...args);
+	console.log(args);
 	console.log("");
-	return eval(...args);
+	return eval(args);
 };
 ```
 
@@ -40,3 +45,20 @@ var embeds = require("jsembeds");
 embeds.embedOpen = "<JSembed>";
 embeds.embedClose = "</JSembed>";
 ```
+
+### exclusivePrefix
+
+In this version of program, you can get some exclusives. Like that:
+
+```javascript
+var embeds = require("jsembeds");
+embeds.embed("This is an... <embed>exclusiv<closeEmbed>!", {exclusiv: "exclusive"})
+```
+
+You can do a prefix for them.
+
+But this works only for official eval drivers and other rewritten to be compatible.
+
+```javascript
+var embeds = require("jsembeds");
+embeds.exclusivePrefix = "Exclusive.";

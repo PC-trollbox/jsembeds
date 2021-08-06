@@ -4,13 +4,13 @@ JSEmbedsToString = {
 	//description: Embeds JavaScript to String
 	//
 	//
-	embed: function(template){
+	embed: function(template, exclusive){
 		var string = "";
 		var embeddable = JSON.parse(JSON.stringify(template.split(this.embedOpen)).split(this.embedClose).join(this.embedClose + "\",\""));
 		for (let embed of embeddable){
 			if (embed.endsWith(this.embedClose)){
 				try{
-					string = string + this.evalDriver(embed.replace(this.embedClose, ""));
+					string = string + this.evalDriver(embed.replace(this.embedClose, ""), exclusive);
 				}catch(err){
 					string = string + "[" + err.toString() + "]";
 				}
@@ -29,8 +29,13 @@ JSEmbedsToString = {
 	//             
 	//
 	//
-	evalDriver: function(...args){
-		return eval(...args);
+	evalDriver: function(string, exclusive){
+		for (var exclusiveName in exclusive){
+			while (string.includes(this.exclusivePrefix + exclusiveName)){
+				string = string.replace(this.exclusivePrefix + exclusiveName, JSON.stringify(exclusive[exclusiveName]));
+			}
+		}
+		return eval(string);
 	},
 	//Embed open variable
 	//====================
@@ -43,7 +48,13 @@ JSEmbedsToString = {
 	//description: Specifies how you should close an embed. 
 	//
 	//
-	embedClose: "<closeEmbed>"
+	embedClose: "<closeEmbed>",
+	//Exclusive prefix variable
+	//====================
+	//description: Specifies how you should ask for exclusives (original eval driver only)
+	//
+	//
+	exclusivePrefix: ""
 }
 try{
 	module.exports = JSEmbedsToString;
