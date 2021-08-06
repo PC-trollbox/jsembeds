@@ -1,6 +1,6 @@
 {
   "name": "jsembeds",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Embed your JS to string, like EJS.",
   "main": "index.js",
   "scripts": {
