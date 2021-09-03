@@ -1,5 +1,6 @@
 # JSEmbeds
 [![NPM](https://nodei.co/npm/jsembeds.png)](https://npmjs.org/package/jsembeds)
+
 Embed your JS to string, like EJS.
 
 
